@@ -1,0 +1,46 @@
+name: TicketBookingServiceJunitTesting-pipeline
+on:
+  workflow_dispatch:
+jobs:
+  git_repo_clean:
+    name: git repo & clean
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3.4.0
+    - name: sh
+      shell: bash
+      run: rm -rf TicketBookingServiceJunitTesting
+    - name: sh
+      shell: bash
+      run: git clone https://github.com/kishancs2020/TicketBookingServiceJunitTesting.git
+    - name: sh
+      shell: bash
+      run: mvn clean -f TicketBookingServiceJunitTesting
+  install:
+    runs-on: ubuntu-latest
+    needs: git_repo_clean
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3.4.0
+    - name: sh
+      shell: bash
+      run: mvn install -f TicketBookingServiceJunitTesting
+  test:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3.4.0
+    - name: sh
+      shell: bash
+      run: mvn test -f TicketBookingServiceJunitTesting
+  package:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3.4.0
+    - name: sh
+      shell: bash
+      run: mvn package -f TicketBookingServiceJunitTesting
